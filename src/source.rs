@@ -2,7 +2,6 @@ pub struct Source {
     text: Vec<char>,
     start: usize,
     current: usize,
-    line: usize,
 }
 
 impl Source {
@@ -11,7 +10,6 @@ impl Source {
             text: text.chars().collect(),
             start: 0,
             current: 0,
-            line: 1,
         }
     }
 
@@ -29,11 +27,36 @@ impl Source {
         }
     }
 
+    pub fn advance_if(&mut self, c: char) -> bool {
+        match self.peek() {
+            None => false,
+            Some(current) => {
+                if current == c {
+                    self.advance();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
     pub fn peek(&self) -> Option<char> {
         match self.is_finished() {
             true => None,
             false => Some(self.text[self.current]),
         }
+    }
+
+    pub fn extract(&self) -> Option<String> {
+        match self.current - self.start {
+            0 => None,
+            _ => Some(self.text[self.start..self.current].iter().collect()),
+        }
+    }
+
+    pub fn reset(&mut self) {
+        self.start = self.current;
     }
 }
 
